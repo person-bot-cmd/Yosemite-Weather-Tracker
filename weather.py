@@ -50,3 +50,15 @@ for year_data in all_data:
 historical_df = pd.concat(dfs, ignore_index=True)
 print(historical_df)
 
+# Run everything
+print(f"Weather analysis for {LOCATION_NAME}")
+print("=" * 40)
+
+print("\n--- Historical August Averages (last 5 years) ---")
+print(historical_df)
+print(f"\nAverage High: {historical_df['max_temp'].mean():.1f}°C")
+print(f"Average Low: {historical_df['min_temp'].mean():.1f}°C")
+
+print("\n--- 7-Day Forecast ---")
+print(forecast_df)
+
