@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from datetime import date, timedelta
+import os
 
 # My camping location
 LATITUDE = 37.8651
@@ -78,6 +79,17 @@ forecast_df = pd.DataFrame({
     "max_temp": forecast_data["daily"]["temperature_2m_max"],
     "min_temp": forecast_data["daily"]["temperature_2m_min"]
 })
+
+def get_current_weather(lat, lon):
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "current": "temperature_2m",
+        "timezone": "America/Los_Angeles"
+    }
+    response = requests.get(url, params=params)
+    return response.json()
 
 
 
