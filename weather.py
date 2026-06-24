@@ -79,6 +79,13 @@ forecast_df = pd.DataFrame({
     "min_temp": forecast_data["daily"]["temperature_2m_min"]
 })
 
+
+
 print("\n--- 7-Day Forecast ---")
 print(forecast_df)
+
+historical_df.to_csv("historical_weather.csv", index=False)
+forecast_df.to_csv("forecast_weather.csv", index=False)
+print("\nData saved to CSV files.")
+
 
