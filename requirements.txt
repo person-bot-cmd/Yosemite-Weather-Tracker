@@ -1,0 +1,3 @@
+pandas
+requests
+pip install -r requirements.txt
