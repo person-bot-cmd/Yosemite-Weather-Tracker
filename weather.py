@@ -2,6 +2,11 @@ import requests
 import pandas as pd
 from datetime import date, timedelta
 import os
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
 
 # My camping location
 LATITUDE = 37.8651
@@ -80,6 +85,8 @@ forecast_df = pd.DataFrame({
     "min_temp": forecast_data["daily"]["temperature_2m_min"]
 })
 
+
+
 def get_current_weather(lat, lon):
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
@@ -111,9 +118,42 @@ temp_f = round(temp_c * 9/5 + 32, 1)
 log_df = pd.DataFrame({
     "date": [str(today)],
     "time": [current_time],
-    "temperature_2m": [current_temp]
-    "temp_f": [temp_f]
+    "temperature_2m": [current_temp],
+    "temp_f": [round( temp_c* 9/5 + 32, 1)]
 })
+
+def generate_dashboard():
+    df = pd.read_csv("daily_log.csv")
+    print(df.columns.tolist())
+    #df["datetime"] = pd.to_datetime(df["date"] + " " + df["time"])
+    df["datetime"] = pd.to_datetime(df["time"])
+    df = df.sort_values("datetime")
+
+    #df = pd.read_csv("daily_log.csv", parse_dates=[["date", "time"]])
+    #df = df.rename(columns={"date_time": "datetime"})
+    df = df.sort_values("datetime")
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(df["datetime"], df["temp_f"], color="steelblue", linewidth=2, label="Temp (°F)")
+
+    max_idx = df["temp_f"].idxmax()
+    min_idx = df["temp_f"].idxmin()
+
+    ax.scatter(df.loc[max_idx, "datetime"], df.loc[max_idx, "temp_f"],
+               color="red", zorder=5, label=f"Max: {df.loc[max_idx, 'temp_f']}°F")
+    ax.scatter(df.loc[min_idx, "datetime"], df.loc[min_idx, "temp_f"],
+               color="blue", zorder=5, label=f"Min: {df.loc[min_idx, 'temp_f']}°F")
+
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
+    plt.xticks(rotation=45)
+    ax.set_title("My City Temperature Dashboard")
+    ax.set_ylabel("Temperature (°F)")
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig("dashboard.png", dpi=150)
+    plt.close()
+
+generate_dashboard()
 
 log_file = "daily_log.csv"
 log_df.to_csv(log_file, mode='a', header=not os.path.isfile(log_file), index=False)
