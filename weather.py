@@ -7,7 +7,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-
 # My camping location
 LATITUDE = 37.8651
 LONGITUDE = -119.5383
@@ -122,7 +121,13 @@ log_df = pd.DataFrame({
     "temp_f": [round( temp_c* 9/5 + 32, 1)]
 })
 
+print(df[["datetime", "temp_f"]])
+print(df.dtypes)
+print(df.columns)
 def generate_dashboard():
+    print("Dashboard starting...")
+    df = pd.read_csv("daily_log.csv", skipinitialspace=True)
+    print("CSV loaded")
     df = pd.read_csv("daily_log.csv")
     print(df.columns.tolist())
     #df["datetime"] = pd.to_datetime(df["date"] + " " + df["time"])
