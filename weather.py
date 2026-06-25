@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from datetime import date, timedelta
 import os
+os.environ['MPLBACKEND'] = 'Agg'
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -121,7 +122,7 @@ log_df = pd.DataFrame({
     "temp_f": [round( temp_c* 9/5 + 32, 1)]
 })
 
-print(df[["datetime", "temp_f"]])
+#print(df[["datetime", "temp_f"]])
 print(df.dtypes)
 print(df.columns)
 def generate_dashboard():
@@ -130,7 +131,7 @@ def generate_dashboard():
     print("CSV loaded")
     df = pd.read_csv("daily_log.csv")
     print(df.columns.tolist())
-    #df["datetime"] = pd.to_datetime(df["date"] + " " + df["time"])
+    #df["datetime"] = pd.to_datetime(df["date"] + " "git  + df["time"])
     df["datetime"] = pd.to_datetime(df["time"])
     df = df.sort_values("datetime")
 
@@ -139,7 +140,10 @@ def generate_dashboard():
     df = df.sort_values("datetime")
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(df["datetime"], df["temp_f"], color="steelblue", linewidth=2, label="Temp (°F)")
+    print("Plotting", df["temp_f"].tolist())
+    #ax.plot(df["datetime"], df["temp_f"], color="steelblue", linewidth=2, label="Temp (°F)")
+    ax.plot(df["datetime"], df["temp_f"], color="steelblue", linewidth=2, 
+        marker='o', markersize=5, label="Temp (°F)")
 
     max_idx = df["temp_f"].idxmax()
     min_idx = df["temp_f"].idxmin()
@@ -149,11 +153,22 @@ def generate_dashboard():
     ax.scatter(df.loc[min_idx, "datetime"], df.loc[min_idx, "temp_f"],
                color="blue", zorder=5, label=f"Min: {df.loc[min_idx, 'temp_f']}°F")
 
+    ax.annotate(f"Max: {df.loc[max_idx, 'temp_f']}°F",
+            xy=(df.loc[max_idx, "datetime"], df.loc[max_idx, "temp_f"]),
+            xytext=(10, 10), textcoords="offset points",
+            color="red", fontsize=9)
+
+    ax.annotate(f"Min: {df.loc[min_idx, 'temp_f']}°F",
+            xy=(df.loc[min_idx, "datetime"], df.loc[min_idx, "temp_f"]),
+            xytext=(10, -15), textcoords="offset points",
+            color="blue", fontsize=9)
+
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
     plt.xticks(rotation=45)
     ax.set_title("My City Temperature Dashboard")
     ax.set_ylabel("Temperature (°F)")
     ax.legend()
+    ax.set_ylim(df["temp_f"].min() - 5, df["temp_f"].max() + 8)
     plt.tight_layout()
     plt.savefig("dashboard.png", dpi=150)
     plt.close()
