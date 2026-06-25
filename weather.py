@@ -4,9 +4,9 @@ from datetime import date, timedelta
 import os
 #os.environ['MPLBACKEND'] = 'Agg'
 #import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+#matplotlib.use('Agg')
+#import matplotlib.pyplot as plt
+#import matplotlib.dates as mdates
 
 # My camping location
 LATITUDE = 37.8651
