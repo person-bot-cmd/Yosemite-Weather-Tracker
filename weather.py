@@ -85,8 +85,6 @@ forecast_df = pd.DataFrame({
     "min_temp": forecast_data["daily"]["temperature_2m_min"]
 })
 
-
-
 def get_current_weather(lat, lon):
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
@@ -99,32 +97,8 @@ def get_current_weather(lat, lon):
     return response.json()
 
 
-
-print("\n--- 7-Day Forecast ---")
-print(forecast_df)
-
-historical_df.to_csv("historical_weather.csv", index=False)
-forecast_df.to_csv("forecast_weather.csv", index=False)
-print("\nData saved to CSV files.")
-
-# Fetch and log today's current temperature
-current_data = get_current_weather(LATITUDE, LONGITUDE)
-current_temp = current_data["current"]["temperature_2m"]
-current_time = current_data["current"]["time"]
-
-temp_c = current_temp  # rename for clarity
-temp_f = round(temp_c * 9/5 + 32, 1)
-
-log_df = pd.DataFrame({
-    "date": [str(today)],
-    "time": [current_time],
-    "temperature_2m": [current_temp],
-    "temp_f": [round( temp_c* 9/5 + 32, 1)]
-})
-
-#print(df[["datetime", "temp_f"]])
-print(df.dtypes)
-print(df.columns)
+#old matplotlib png code that generates static image (dashboard.png) instead of interactive map:
+'''
 def generate_dashboard():
     print("Dashboard starting...")
     df = pd.read_csv("daily_log.csv", skipinitialspace=True)
@@ -172,6 +146,37 @@ def generate_dashboard():
     plt.tight_layout()
     plt.savefig("dashboard.png", dpi=150)
     plt.close()
+'''
+print("\n--- 7-Day Forecast ---")
+print(forecast_df)
+
+historical_df.to_csv("historical_weather.csv", index=False)
+forecast_df.to_csv("forecast_weather.csv", index=False)
+print("\nData saved to CSV files.")
+
+# Fetch and log today's current temperature
+current_data = get_current_weather(LATITUDE, LONGITUDE)
+current_temp = current_data["current"]["temperature_2m"]
+current_time = current_data["current"]["time"]
+
+temp_c = current_temp  # rename for clarity
+temp_f = round(temp_c * 9/5 + 32, 1)
+
+log_df = pd.DataFrame({
+    "date": [str(today)],
+    "time": [current_time],
+    "temperature_2m": [current_temp],
+    "temp_f": [round( temp_c* 9/5 + 32, 1)]
+})
+
+def generate_dashboard():
+    df = pd.read_csv("daily_log.csv", skipinitialspace=True)
+    df["timestamp"] = pd.to_datetime(df["recorded_at"])
+    
+
+#print(df[["datetime", "temp_f"]])
+print(df.dtypes)
+print(df.columns)
 
 generate_dashboard()
 
