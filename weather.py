@@ -206,7 +206,7 @@ def generate_dashboard():
         xaxis_title="Date / Time"
     )
 
-    fig.write_html("dashboard.html")
+    fig.write_html("dashboard.html", include_plotlyjs='cdn')
     
 
 #print(df[["datetime", "temp_f"]])
