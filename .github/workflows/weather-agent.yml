@@ -26,6 +26,8 @@ jobs:
 
       - name: Run weather script
         run: python weather.py
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Commit updated data
         run: |
@@ -34,3 +36,4 @@ jobs:
           git add historical_weather.csv forecast_weather.csv daily_log.csv 
           git commit -m "Update weather data $(date +'%Y-%m-%d')" || echo "No changes to commit"
           git push
+        
