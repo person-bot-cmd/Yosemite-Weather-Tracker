@@ -169,7 +169,16 @@ current_time = current_data["current"]["time"]
 
 temp_c = current_temp  # rename for clarity
 temp_f = round(temp_c * 9/5 + 32, 1)
-
+def send_discord_alert(message):
+    if not DISCORD_WEBHOOK_URL:
+        print("No Discord webhook configured.")
+        return
+    response = requests.post(DISCORD_WEBHOOK_URL, json={"content": message})
+    if response.status_code == 204:
+        print("Discord alert sent.")
+    else:
+        print(f"Discord alert failed: {response.status_code}")
+        
 if temp_f > HOT_THRESHOLD:
     send_discord_alert(f"🌡️ Heat alert! {temp_f}°F — above your {HOT_THRESHOLD}°F threshold.")
 elif temp_f < COLD_THRESHOLD:
