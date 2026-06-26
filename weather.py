@@ -7,6 +7,12 @@ import os
 #matplotlib.use('Agg')
 #import matplotlib.pyplot as plt
 #import matplotlib.dates as mdates
+import requests
+import os
+
+HOT_THRESHOLD  = 60   # temporarily low for testing — change to 80 after
+COLD_THRESHOLD = 45
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 
 # My camping location
 LATITUDE = 37.8651
@@ -17,6 +23,8 @@ LOCATION_NAME = "Yosemite National Park"
 CAMP_MONTH = 8
 CAMP_START_DAY = 1
 CAMP_END_DAY = 14
+
+
 
 def get_forecast(lat, lon):
     url = "https://api.open-meteo.com/v1/forecast"
@@ -162,6 +170,11 @@ current_time = current_data["current"]["time"]
 temp_c = current_temp  # rename for clarity
 temp_f = round(temp_c * 9/5 + 32, 1)
 
+if temp_f > HOT_THRESHOLD:
+    send_discord_alert(f"🌡️ Heat alert! {temp_f}°F — above your {HOT_THRESHOLD}°F threshold.")
+elif temp_f < COLD_THRESHOLD:
+    send_discord_alert(f"❄️ Cold alert! {temp_f}°F — below your {COLD_THRESHOLD}°F threshold.")
+
 log_df = pd.DataFrame({
     "date": [str(today)],
     "time": [current_time],
@@ -208,7 +221,16 @@ def generate_dashboard():
 
     fig.write_html("dashboard.html", include_plotlyjs='cdn')
     
-
+def send_discord_alert(message):
+    if not DISCORD_WEBHOOK_URL:
+        print("No Discord webhook configured.")
+        return
+    response = requests.post(DISCORD_WEBHOOK_URL, json={"content": message})
+    if response.status_code == 204:
+        print("Discord alert sent.")
+    else:
+        print(f"Discord alert failed: {response.status_code}")
+        
 #print(df[["datetime", "temp_f"]])
 print(df.dtypes)
 print(df.columns)
