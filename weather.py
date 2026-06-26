@@ -11,7 +11,7 @@ import requests
 import os
 
 HOT_THRESHOLD  = 60   # temporarily low for testing — change to 80 after
-COLD_THRESHOLD = 45
+COLD_THRESHOLD = 55
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 
 # My camping location
